@@ -38,6 +38,20 @@ it('should support tags with text', function(){
   });
 })
 
+it('should support tags with attributes', function(){
+  var node = parse('<foo bar=baz some="stuff here" whatever=\'whoop\'></foo>');
+  node.root.should.eql({
+    name: 'foo',
+    attributes: {
+      bar: 'baz',
+      some: 'stuff here',
+      whatever: 'whoop'
+    },
+    children: [],
+    content: ''
+  });
+})
+
 it('should support nested tags', function(){
   var node = parse('<a><b><c>hello</c></b></a>');
   node.root.should.eql({
