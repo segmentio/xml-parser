@@ -42,6 +42,7 @@ function parse(xml) {
       tag.attributes[attr.name] = attr.value;
     }
 
+    match(/\??>\s*/);
     return tag;
   }
 
