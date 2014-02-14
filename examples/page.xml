@@ -1,0 +1,143 @@
+<html>
+  <head>
+    <title>Segment.io - The ultimate analytics platform</title>
+    <meta name="description" content="The ultimate analytics platform">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/home/build/build.css?bust=1.8.0">
+    <script src="//use.typekit.net/mqm8qyy.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+    <script src="//cdn.optimizely.com/js/170430035.js"></script>
+    <script>
+      window.analytics||(window.analytics=[]),window.analytics.methods=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group","on","once","off"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;window.analytics.methods.length>i;i++){var method=window.analytics.methods[i];window.analytics[method]=window.analytics.factory(method)}window.analytics.load=function(t){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)},window.analytics.SNIPPET_VERSION="2.0.8",
+window.analytics.load("jyumwga");
+    </script>
+  </head>
+  <body>
+    <header class="header" role="banner">
+      <div class="Page">
+        <nav id="MobileNavigation"></nav>
+        <div class="Navigation Navigation--">
+  <h1 class="Navigation-logo">
+    <a href="/">Segment.io</a>
+  </h1>
+  <nav class="Navigation-left">
+    <a href="/features" class="Navigation-item">Features</a>
+    <a href="/pricing" class="Navigation-item">Pricing</a>
+    <a href="/academy" class="Navigation-item">Academy</a>
+    <a href="/docs" class="Navigation-item ">Docs</a>
+    <div class="Navigation-dropdown">
+      <div class="Navigation-trigger" on-click="open">
+        <div class="Navigation-menu">
+          <a href="/libraries">Libraries</a>
+          <a href="/mobile">Mobile</a>
+          <a href="/customers">Customers</a>
+          <a href="/blog">Blog</a>
+          <a href="/team">Team</a>
+          <a href="/jobs">Jobs</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <nav class="Navigation-right">
+
+    <a href="/tjholowaychuk" class="Navigation-item">Projects</a>
+    <div class="Navigation-dropdown">
+      <img class="Navigation-avatar" src="https://secure.gravatar.com/avatar/f1e3ab214a976a39cfd713bc93deb10f" on-click="open">
+      <span class="Navigation-trigger" on-click="open">
+        <div class="Navigation-menu Navigation-menu--right">
+          <a href="/tjholowaychuk/settings">Account Settings</a>
+          <a href="/tjholowaychuk/new-project">New Project</a>
+          <a href="/tjholowaychuk/new-organization">New Organization</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </span>
+    </div>
+
+  </nav>
+</div>
+        <div class="header-content">
+          <h2 class="header-title">The ultimate analytics platform.</h2>
+          <h3 class="header-lead">Send your data to any service with the flick of a switch.</h3>
+          <div class="header-action">
+            <a href="/features" class="Button Button--small Button--arrow">Learn More</a>
+            <a href="/signup" class="Button Button--small Button--arrow Button--outline">Get Started</a>
+          </div>
+        </div>
+        <div class="header-image Chrome">
+          <div class="integrations"></div>
+        </div>
+      </div>
+    </header>
+    <main class="Page">
+      <section class="Highlights">
+        <a href="/docs/integrations" class="u-size1of3 Highlight">
+          <i class="Highlight-icon Highlight-icon--switch"></i>
+          <div class="Highlight-content">
+            <h3 class="Highlight-title">Integrate instantly.</h3>
+            <p>Integrate analytics tools in seconds, not days. No more setup headaches, no need to push code.</p>
+            <span class="Highlight-link ArrowLink ArrowLink--caps">See all integrations</span>
+          </div>
+        </a>
+        <a href="/features" class="u-size1of3 Highlight">
+          <i class="Highlight-icon Highlight-icon--lock"></i>
+          <div class="Highlight-content">
+            <h3 class="Highlight-title">No data lock-in.</h3>
+            <p>We back up your data so that you can search it or export it. Never be locked-in to your tools again.</p>
+            <span class="Highlight-link ArrowLink ArrowLink--caps">View features</span>
+          </div>
+        </a>
+        <a href="/libraries" class="u-size1of3 Highlight">
+          <i class="Highlight-icon Highlight-icon--mobile"></i>
+          <div class="Highlight-content">
+            <h3 class="Highlight-title">For web &amp; mobile.</h3>
+            <p>We give you simple, clean libraries for your mobile apps, your websites and even your servers.</p>
+            <span class="Highlight-link ArrowLink ArrowLink--caps">View libraries</span>
+          </div>
+        </a>
+      </section>
+      <section>
+        <h3 class="DividerTitle">
+          <span>Our Customers</span>
+        </h3>
+        <div class="LogoSalad">
+          <span class="LogoSalad-item">
+            <i class="logo-target image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-theeconomist image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-theknot image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-livenation image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-99designs image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-uservoice image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-docusign image-replace" /></i>
+          </span>
+          <span class="LogoSalad-item">
+            <i class="logo-recurly image-replace" /></i>
+          </span>
+        </div>
+        <aside class="ButtonAction">
+          <span class="ButtonAction-body">Getting started is easy. Be up and running in minutes</span>
+          <a href="/signup" class="ButtonAction-button Button Button--arrow">Get Started</a>
+        </aside>
+      </section>
+    </main>
+    <footer class="Page MicroFooter">
+      <a href="/docs">Documentation</a>
+      <a href="https://github.com/segmentio/press-kit">Press Kit</a>
+      <a href="/">Segment.io</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+    </footer>
+    <script src="/home/build/build.js?bust=1.8.0"></script>
+  </body>
+</html>
