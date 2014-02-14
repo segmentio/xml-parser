@@ -3,8 +3,13 @@
   "version": "0.0.1",
   "repository": "segmentio/xml-parser",
   "description": "the little xml parser that could",
-  "keywords": ["xml", "sucks"],
-  "dependencies": {},
+  "keywords": [
+    "xml",
+    "sucks"
+  ],
+  "dependencies": {
+    "debug": "~0.7.4"
+  },
   "devDependencies": {
     "mocha": "*",
     "should": "*"

@@ -1,5 +1,11 @@
 
 /**
+ * Module dependencies.
+ */
+
+var debug = require('debug')('xml-parser');
+
+/**
  * Expose `parse`.
  */
 
@@ -57,6 +63,7 @@ function parse(xml) {
    */
 
   function tag() {
+    debug('tag %j', xml);
     var m = match(/^<([\w+:]+)\s*/);
     if (!m) return;
 
@@ -93,6 +100,7 @@ function parse(xml) {
    */
 
   function content() {
+    debug('content %j', xml);
     var m = match(/^([^<]*)/);
     if (m) return m[1];
     return '';
@@ -103,6 +111,7 @@ function parse(xml) {
    */
 
   function attribute() {
+    debug('attribute %j', xml);
     var m = match(/([\w:]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
     if (!m) return;
     return { name: m[1], value: strip(m[2]) }
