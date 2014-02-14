@@ -1,5 +1,5 @@
 <foo>
-   <bar>one</bar>
-   <baz>two</baz>
-   <raz><em>three</em></raz>
+   <a>one</a>
+   <b>two</b>
+   <c><em>three</em></c>
 </foo>

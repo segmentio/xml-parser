@@ -92,6 +92,9 @@ function parse(xml) {
       node.children.push(child);
     }
 
+    // closing
+    match(/^<\/[\w:]+>\s*/);
+
     return node;
   }
 
