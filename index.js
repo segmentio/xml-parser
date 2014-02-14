@@ -24,7 +24,24 @@ function parse(xml) {
   }
 
   function declaration() {
-    if (is('<?xml')) return tag();
+    var m = match(/^<\?xml\s*/);
+    if (!m) return;
+
+    // tag
+    var tag = {
+      attributes: {}
+    };
+
+    // attributes
+    while (!(eos() || is('?>'))) {
+      var attr = attribute();
+      if (!attr) return tag;
+      tag.attributes[attr.name] = attr.value;
+    }
+
+    match(/\?>\s*/);
+
+    return tag;
   }
 
   function tag() {
@@ -46,6 +63,9 @@ function parse(xml) {
     }
 
     match(/\??>\s*/);
+
+    // children
+
 
     return tag;
   }
