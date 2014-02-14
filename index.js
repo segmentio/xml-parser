@@ -31,11 +31,14 @@ function parse(xml) {
     var m = match(/^<(\S+)\s*/);
     if (!m) return;
 
+    // name
     var tag = {
       name: m[1],
-      attributes: {}
+      attributes: {},
+      children: []
     };
 
+    // attributes
     while (!(eos() || is('>') || is('?>'))) {
       var attr = attribute();
       if (!attr) return tag;
@@ -43,6 +46,7 @@ function parse(xml) {
     }
 
     match(/\??>\s*/);
+
     return tag;
   }
 
