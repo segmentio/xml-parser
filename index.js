@@ -20,6 +20,9 @@ module.exports = parse;
  */
 
 function parse(xml) {
+  // strip comments
+  xml = xml.replace(/<!--.*?-->/g, '');
+
   return document();
 
   /**

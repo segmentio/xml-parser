@@ -18,6 +18,16 @@ it('should support declarations', function(){
   })
 })
 
+it('should support comments', function(){
+  var node = parse('<!-- hello --><foo></foo><!-- world -->');
+  node.root.should.eql({
+    name: 'foo',
+    attributes: {},
+    children: [],
+    content: ''
+  });
+})
+
 it('should support tags', function(){
   var node = parse('<foo></foo>');
   node.root.should.eql({
