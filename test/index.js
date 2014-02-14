@@ -38,6 +38,16 @@ it('should support tags with text', function(){
   });
 })
 
+it('should support weird whitespace', function(){
+  var node = parse('<foo \n\n\nbar\n\n=   \nbaz>\n\nhello world</\n\nfoo>');
+  node.root.should.eql({
+    name: 'foo',
+    attributes: { bar: 'baz' },
+    children: [],
+    content: 'hello world'
+  });
+})
+
 it('should support tags with attributes', function(){
   var node = parse('<foo bar=baz some="stuff here" whatever=\'whoop\'></foo>');
   node.root.should.eql({
