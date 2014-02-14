@@ -86,3 +86,27 @@ it('should support nested tags', function(){
   })
 })
 
+it('should support nested tags with text', function(){
+  var node = parse('<a>foo <b>bar <c>baz</c></b></a>');
+  node.root.should.eql({
+    "name": "a",
+    "attributes": {},
+    "children": [
+      {
+        "name": "b",
+        "attributes": {},
+        "children": [
+          {
+            "name": "c",
+            "attributes": {},
+            "children": [],
+            "content": "baz"
+          }
+        ],
+        "content": "bar "
+      }
+    ],
+    "content": "foo "
+  })
+})
+
