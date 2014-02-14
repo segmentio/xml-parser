@@ -5,4 +5,7 @@ test:
 		--reporter dot \
 		--bail
 
-.PHONY: test
+bench:
+	@./node_modules/.bin/matcha
+
+.PHONY: test bench
