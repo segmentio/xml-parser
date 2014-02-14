@@ -36,20 +36,20 @@ function parse(xml) {
     if (!m) return;
 
     // tag
-    var tag = {
+    var node = {
       attributes: {}
     };
 
     // attributes
     while (!(eos() || is('?>'))) {
       var attr = attribute();
-      if (!attr) return tag;
-      tag.attributes[attr.name] = attr.value;
+      if (!attr) return node;
+      node.attributes[attr.name] = attr.value;
     }
 
     match(/\?>\s*/);
 
-    return tag;
+    return node;
   }
 
   /**
@@ -57,11 +57,11 @@ function parse(xml) {
    */
 
   function tag() {
-    var m = match(/^<(\S+)\s*/);
+    var m = match(/^<([\w+:]+)\s*/);
     if (!m) return;
 
     // name
-    var tag = {
+    var node = {
       name: m[1],
       attributes: {},
       children: []
@@ -70,16 +70,19 @@ function parse(xml) {
     // attributes
     while (!(eos() || is('>') || is('?>'))) {
       var attr = attribute();
-      if (!attr) return tag;
-      tag.attributes[attr.name] = attr.value;
+      if (!attr) return node;
+      node.attributes[attr.name] = attr.value;
     }
 
     match(/\??>\s*/);
 
     // children
+    var child;
+    while (child = tag()) {
+      node.children.push(child);
+    }
 
-
-    return tag;
+    return node;
   }
 
   /**
