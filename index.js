@@ -16,12 +16,20 @@ module.exports = parse;
 function parse(xml) {
   return document();
 
+  /**
+   * XML document.
+   */
+
   function document() {
     return {
       declaration: declaration(),
       root: tag()
     }
   }
+
+  /**
+   * Declaration.
+   */
 
   function declaration() {
     var m = match(/^<\?xml\s*/);
@@ -43,6 +51,10 @@ function parse(xml) {
 
     return tag;
   }
+
+  /**
+   * Tag.
+   */
 
   function tag() {
     var m = match(/^<(\S+)\s*/);
@@ -70,15 +82,27 @@ function parse(xml) {
     return tag;
   }
 
+  /**
+   * Attribute.
+   */
+
   function attribute() {
     var m = match(/([\w:]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
     if (!m) return;
     return { name: m[1], value: strip(m[2]) }
   }
 
+  /**
+   * Strip quotes from `val`.
+   */
+
   function strip(val) {
     return val.replace(/^['"]|['"]$/g, '');
   }
+
+  /**
+   * Match `re` and advance the string.
+   */
 
   function match(re) {
     var m = xml.match(re);
@@ -87,9 +111,17 @@ function parse(xml) {
     return m;
   }
 
+  /**
+   * End-of-source.
+   */
+
   function eos() {
     return 0 == xml.length;
   }
+
+  /**
+   * Check for `prefix`.
+   */
 
   function is(prefix) {
     return 0 == xml.indexOf(prefix);
