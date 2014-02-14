@@ -6,7 +6,7 @@
 ## Installation
 
 ```
-$ npm install segmentio/xml-parser
+$ npm install xml-parser
 ```
 
 ## Example
