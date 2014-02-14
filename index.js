@@ -19,13 +19,12 @@ function parse(xml) {
   function document() {
     return {
       declaration: declaration(),
-      root: root()
+      root: tag()
     }
   }
 
   function declaration() {
-    if (!is('<?xml')) return;
-    console.log(tag());
+    if (is('<?xml')) return tag();
   }
 
   function tag() {
@@ -40,7 +39,6 @@ function parse(xml) {
     while (!(eos() || is('>') || is('?>'))) {
       var attr = attribute();
       if (!attr) return tag;
-
       tag.attributes[attr.name] = attr.value;
     }
 
