@@ -1,7 +1,7 @@
 
 # xml-parser
 
-  Simple non-compiant XML parser.
+  Simple non-compiant XML parser because we just need to parse some basic responses and libxml takes forever to compile ;D
 
 ## Installation
 
