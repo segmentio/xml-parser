@@ -1,13 +1,13 @@
 {
-  "name": "<name>",
+  "name": "xml-parser",
   "version": "0.0.1",
-  "repository": "visionmedia/<name>",
-  "description": "",
-  "keywords": [],
+  "repository": "segmentio/xml-parser",
+  "description": "the little xml parser that could",
+  "keywords": ["xml", "sucks"],
   "dependencies": {},
   "devDependencies": {
     "mocha": "*",
-    "should": "*"  
+    "should": "*"
   },
   "license": "MIT"
 }
