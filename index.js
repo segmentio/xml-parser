@@ -76,6 +76,9 @@ function parse(xml) {
 
     match(/\??>\s*/);
 
+    // content
+    node.content = content();
+
     // children
     var child;
     while (child = tag()) {
@@ -83,6 +86,16 @@ function parse(xml) {
     }
 
     return node;
+  }
+
+  /**
+   * Text content.
+   */
+
+  function content() {
+    var m = match(/^([^<]*)/);
+    if (m) return m[1];
+    return '';
   }
 
   /**
