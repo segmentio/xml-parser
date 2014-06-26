@@ -80,10 +80,15 @@ function parse(xml) {
     };
 
     // attributes
-    while (!(eos() || is('>') || is('?>'))) {
+    while (!(eos() || is('>') || is('?>') || is('/>'))) {
       var attr = attribute();
       if (!attr) return node;
       node.attributes[attr.name] = attr.value;
+    }
+
+    // self closing tag
+    if (match(/^\s*\/>/)) {
+      return node;
     }
 
     match(/\??>\s*/);

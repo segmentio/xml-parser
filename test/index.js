@@ -120,3 +120,60 @@ it('should support nested tags with text', function(){
   })
 })
 
+it('should support self-closing tags', function () {
+  var node = parse('<a><b>foo</b><b a="bar" /><b>bar</b></a>');
+  node.root.should.eql({
+    "name": "a",
+    "attributes": {},
+    "children": [
+      {
+        "name": "b",
+        "attributes": {},
+        "children": [],
+        "content": "foo"
+      },
+      {
+        "name": "b",
+        "attributes": {
+          "a": "bar"
+        },
+        "children": []
+      },
+      {
+        "name": "b",
+        "attributes": {},
+        "children": [],
+        "content": "bar"
+      }
+    ],
+    "content": ""
+  })
+})
+
+it('should support self-closing tags without attributes', function () {
+  var node = parse('<a><b>foo</b><b /><b>bar</b></a>');
+  node.root.should.eql({
+    "name": "a",
+    "attributes": {},
+    "children": [
+      {
+        "name": "b",
+        "attributes": {},
+        "children": [],
+        "content": "foo"
+      },
+      {
+        "name": "b",
+        "attributes": {},
+        "children": []
+      },
+      {
+        "name": "b",
+        "attributes": {},
+        "children": [],
+        "content": "bar"
+      }
+    ],
+    "content": ""
+  })
+})
