@@ -151,7 +151,7 @@ it('should support self-closing tags', function () {
 })
 
 it('should support self-closing tags without attributes', function () {
-  var node = parse('<a><b>foo</b><b /><b>bar</b></a>');
+  var node = parse('<a><b>foo</b><b /> <b>bar</b></a>');
   node.root.should.eql({
     "name": "a",
     "attributes": {},

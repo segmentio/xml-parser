@@ -87,7 +87,7 @@ function parse(xml) {
     }
 
     // self closing tag
-    if (match(/^\s*\/>/)) {
+    if (match(/^\s*\/>\s*/)) {
       return node;
     }
 
