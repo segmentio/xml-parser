@@ -177,3 +177,13 @@ it('should support self-closing tags without attributes', function () {
     "content": ""
   })
 })
+
+it('should support multi-line comments', function () {
+  var node = parse('<a><!-- multi-line\n comment\n test -->foo</a>')
+  node.root.should.eql({
+    "name": "a",
+    "attributes": {},
+    "children": [],
+    "content": "foo"
+  })
+})
