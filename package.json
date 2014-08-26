@@ -1,6 +1,6 @@
 {
   "name": "xml-parser",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "repository": "segmentio/xml-parser",
   "description": "the little xml parser that could",
   "keywords": [
