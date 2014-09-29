@@ -1,5 +1,6 @@
 
 var parse = require('..');
+var should = require('should');
 
 it('should support blank strings', function(){
   var node = parse('');
@@ -185,5 +186,17 @@ it('should support multi-line comments', function () {
     "attributes": {},
     "children": [],
     "content": "foo"
+  })
+})
+
+it('should support attributes with a hyphen', function () {
+  var node = parse('<a data-bar="baz">foo</a>')
+  node.root.should.eql({
+    name: "a",
+    attributes: {
+      "data-bar": "baz"
+    },
+    children: [],
+    content: "foo"
   })
 })
