@@ -200,3 +200,35 @@ it('should support attributes with a hyphen', function () {
     content: "foo"
   })
 })
+
+it('should support tags with a dot', function () {
+    var node = parse('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
+    node.root.should.eql({
+      name: "root",
+      attributes: {},
+      children: [{
+        name: "c:Key.Columns",
+        attributes: {},
+        children: [{
+          name: "o:Column",
+          attributes: {
+            Ref: "ol1"
+          },
+          children: []
+        }],
+        content: ""
+      }, {
+        name: "c:Key.Columns",
+        attributes: {},
+        children: [{
+          name: "o:Column",
+          attributes: {
+            "Ref": "ol2"
+          },
+          children: []
+        }],
+        content: ""
+      }],
+      content: ""
+    })
+})
