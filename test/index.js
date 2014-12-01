@@ -232,3 +232,31 @@ it('should support tags with a dot', function () {
       content: ""
     })
 })
+
+it('should support tags with hyphen', function () {
+  var node = parse(
+    '<root>' +
+      '<data-field1>val1</data-field1>' +
+      '<data-field2>val2</data-field2>' +
+    '</root>'
+  );
+  node.root.should.eql({
+    name: 'root',
+    attributes: {},
+    content: '',
+    children: [
+      {
+        name: 'data-field1',
+        attributes: {},
+        children: [],
+        content: 'val1'
+      },
+      {
+        name: 'data-field2',
+        attributes: {},
+        children: [],
+        content: 'val2'
+      }
+    ]
+  });
+});
