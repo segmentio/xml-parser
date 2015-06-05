@@ -4,7 +4,7 @@ var should = require('should');
 
 it('should support blank strings', function(){
   var node = parse('');
-  node.should.eql({ declaration: null, root: null });
+  node.should.eql({ declaration: undefined, root: undefined });
 })
 
 it('should support declarations', function(){
