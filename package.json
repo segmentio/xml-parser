@@ -3,6 +3,9 @@
   "version": "1.2.0",
   "repository": "segmentio/xml-parser",
   "description": "the little xml parser that could",
+  "scripts": {
+    "test": "make test"
+  },
   "keywords": [
     "xml",
     "sucks"
