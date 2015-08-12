@@ -58,7 +58,7 @@ function parse(xml) {
       node.attributes[attr.name] = attr.value;
     }
 
-    match(/\?>\s*(<\?.*\?>)\s*/);
+    match(/\?>\s*<\?.*?\?>/);
 
     return node;
   }
