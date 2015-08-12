@@ -19,6 +19,11 @@ it('should support declarations', function(){
   })
 })
 
+it('should ignore stylesheet declarations', function(){
+  var node = parse('<?xml version="1.0" ?><?xml-stylesheet title="XSL_formatting"?><foo></foo><?xml version="1.0" ?>');
+  should.exist(node.root);
+})
+
 it('should support comments', function(){
   var node = parse('<!-- hello --><foo></foo><!-- world -->');
   node.root.should.eql({
