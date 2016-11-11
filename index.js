@@ -15,15 +15,24 @@ module.exports = parse;
  * Parse the given string of `xml`.
  *
  * @param {String} xml
+ * @param {Object} [options]
+ *  @config {Boolean} [trim=true]
+ *  @config {Boolean} [stripComments=true]
  * @return {Object}
  * @api public
  */
 
-function parse(xml) {
-  xml = xml.trim();
+function parse(xml, options) {
+
+  // trim content
+  if (!options || options.trim) {
+    xml = xml.trim();
+  }
 
   // strip comments
-  xml = xml.replace(/<!--[\s\S]*?-->/g, '');
+  if (!options || options.stripComments) {
+    xml = xml.replace(/<!--[\s\S]*?-->/g, '');
+  }
 
   return document();
 
@@ -32,10 +41,27 @@ function parse(xml) {
    */
 
   function document() {
-    return {
-      declaration: declaration(),
-      root: tag()
+
+    var decl = declaration();
+    var child;
+    var children = [];
+    var documentRootNode;
+
+    while (child = nextRootChild()) {
+      if (child.name !== '#comment') {
+        if (documentRootNode) {
+          throw new Error('Found multiple root nodes');
+        }
+        documentRootNode = child;
+      }
+      children.push(child);
     }
+
+    return {
+      declaration: decl,
+      root: documentRootNode,
+      children: children
+    };
   }
 
   /**
@@ -87,25 +113,40 @@ function parse(xml) {
     }
 
     // self closing tag
-    if (match(/^\s*\/>\s*/)) {
+    if (match(/^\s*\/>/)) {
       return node;
     }
 
-    match(/\??>\s*/);
-
-    // content
-    node.content = content();
+    match(/\??>/);
 
     // children
     var child;
-    while (child = tag()) {
+    while (child = nextChild()) {
       node.children.push(child);
     }
 
     // closing
-    match(/^<\/[\w-:.]+>\s*/);
+    match(/^<\/[\w-:.]+>/);
 
     return node;
+  }
+
+  function nextChild() {
+    return tag() || content() || comment();
+  }
+
+  function nextRootChild() {
+    return tag() || comment();
+  }
+
+  function comment() {
+    var m = match(/^<!--[\s\S]*?-->/);
+    if (m) {
+      return {
+        name: '#comment',
+        content: m[0]
+      };
+    }
   }
 
   /**
@@ -114,9 +155,13 @@ function parse(xml) {
 
   function content() {
     debug('content %j', xml);
-    var m = match(/^([^<]*)/);
-    if (m) return m[1];
-    return '';
+    var m = match(/^([^<]+)/);
+    if (m) {
+      return {
+        name: '#text',
+        content: m[1]
+      };
+    }
   }
 
   /**

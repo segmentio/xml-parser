@@ -65,23 +65,38 @@ Yields:
                     children:
                      [ { name: 'id',
                          attributes: {},
-                         children: [],
-                         content: '003D000000OY9omIAD' },
-                       { name: 'success', attributes: {}, children: [], content: 'true' } ],
-                    content: '' },
+                         children: [{name: '#text', content: '003D000000OY9omIAD'}]
+                       { name: 'success', attributes: {}, children: [{name: '#text', content: 'true'}] } ],
+                  },
                   { name: 'result',
                     attributes: {},
                     children:
                      [ { name: 'id',
                          attributes: {},
-                         children: [],
-                         content: '001D000000HTK3aIAH' },
-                       { name: 'success', attributes: {}, children: [], content: 'true' } ],
-                    content: '' } ],
-               content: '' } ],
-          content: '' } ],
-     content: '' } }
+                         children: [{name: '#text', content: '001D000000HTK3aIAH'}]
+                       { name: 'success', attributes: {}, children: [{name: '#text', content: 'true'}] } ],
+                  } ],
+                } ],
+          } ],
+     } }
 ```
+
+## Options
+
+ JavaScript:
+ 
+```js
+var inspect = require('util').inspect;
+var parse = require('xml-parser');
+var options = {trim: false, stripComments: false};
+
+var obj = parse(xml, options);
+console.log(inspect(obj, { colors: true, depth: Infinity }));
+```
+
+- `trim` (Boolean, default=true) Set to true to trim the input before parsing it.
+- `stripComments` (Boolean, default=true) Set to true to strip the comments when parsing.
+
 
 # License
 

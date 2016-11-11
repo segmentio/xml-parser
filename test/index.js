@@ -4,8 +4,8 @@ var should = require('should');
 
 it('should support blank strings', function(){
   var node = parse('');
-  node.should.eql({ declaration: undefined, root: undefined });
-})
+  node.should.eql({ declaration: undefined, root: undefined, children: [] });
+});
 
 it('should support declarations', function(){
   var node = parse('<?xml version="1.0" ?>');
@@ -15,49 +15,93 @@ it('should support declarations', function(){
         version: '1.0'
       }
     },
-    root: undefined
-  })
-})
+    root: undefined,
+    children: []
+  });
+});
 
-it('should support comments', function(){
+it('should strip comments when option is not specified', function(){
   var node = parse('<!-- hello --><foo></foo><!-- world -->');
-  node.root.should.eql({
+
+  var root = {
     name: 'foo',
     attributes: {},
-    children: [],
-    content: ''
-  });
-})
+    children: []
+  };
 
-it('should support tags', function(){
+  node.should.eql(
+      { declaration: undefined,
+        root: root,
+        children: [root]
+      });
+});
+
+it('should strip comments when option is true', function(){
+  var node = parse('<!-- hello --><foo></foo><!-- world -->', {stripComments: true});
+
+  var root = {
+    name: 'foo',
+    attributes: {},
+    children: []
+  };
+
+  node.should.eql(
+      { declaration: undefined,
+        root: root,
+        children: [root]
+      });
+});
+
+it('should not strip comments when option is false', function(){
+  var node = parse('<!-- hello --><foo></foo><!-- world -->', {stripComments: false});
+
+  var root = {
+    name: 'foo',
+    attributes: {},
+    children: []
+  };
+
+  node.should.eql(
+      { declaration: undefined,
+        root: root,
+        children: [
+          {name: '#comment', content: '<!-- hello -->'},
+          root,
+          {name: '#comment', content: '<!-- world -->'}
+        ]
+      });
+});
+
+it('should support tags without text', function(){
   var node = parse('<foo></foo>');
   node.root.should.eql({
     name: 'foo',
     attributes: {},
-    children: [],
-    content: ''
+    children: []
   });
-})
+});
 
 it('should support tags with text', function(){
   var node = parse('<foo>hello world</foo>');
   node.root.should.eql({
     name: 'foo',
     attributes: {},
-    children: [],
-    content: 'hello world'
+    children: [
+        {name: '#text', content: 'hello world'}
+    ]
   });
-})
+});
 
 it('should support weird whitespace', function(){
   var node = parse('<foo \n\n\nbar\n\n=   \nbaz>\n\nhello world</\n\nfoo>');
   node.root.should.eql({
     name: 'foo',
     attributes: { bar: 'baz' },
-    children: [],
-    content: 'hello world'
+    children: [
+        {name: '#text', content: '\n\nhello world'}
+    ]
   });
-})
+});
 
 it('should support tags with attributes', function(){
   var node = parse('<foo bar=baz some="stuff here" whatever=\'whoop\'></foo>');
@@ -68,170 +112,156 @@ it('should support tags with attributes', function(){
       some: 'stuff here',
       whatever: 'whoop'
     },
-    children: [],
-    content: ''
+    children: []
   });
-})
+});
 
 it('should support nested tags', function(){
   var node = parse('<a><b><c>hello</c></b></a>');
   node.root.should.eql({
-    "name": "a",
-    "attributes": {},
-    "children": [
+    name: 'a',
+    attributes: {},
+    children: [
       {
-        "name": "b",
-        "attributes": {},
-        "children": [
+        name: 'b',
+        attributes: {},
+        children: [
           {
-            "name": "c",
-            "attributes": {},
-            "children": [],
-            "content": "hello"
+            name: 'c',
+            attributes: {},
+            children: [{name: '#text', content: 'hello'}]
           }
-        ],
-        "content": ""
+        ]
       }
-    ],
-    "content": ""
-  })
-})
+    ]
+  });
+});
 
 it('should support nested tags with text', function(){
-  var node = parse('<a>foo <b>bar <c>baz</c></b></a>');
+  var node = parse('<a>foo <b>bar <c>baz</c> bad</b></a>');
   node.root.should.eql({
-    "name": "a",
-    "attributes": {},
-    "children": [
+    name: 'a',
+    attributes: {},
+    children: [
+      {name: '#text', content: 'foo '},
       {
-        "name": "b",
-        "attributes": {},
-        "children": [
+        name: 'b',
+        attributes: {},
+        children: [
+          {name: '#text', content: 'bar '},
           {
-            "name": "c",
-            "attributes": {},
-            "children": [],
-            "content": "baz"
-          }
-        ],
-        "content": "bar "
+            name: 'c',
+            attributes: {},
+            children: [{name: '#text', content: 'baz'}]
+          },
+          {name: '#text', content: ' bad'}
+        ]
       }
-    ],
-    "content": "foo "
-  })
-})
+    ]
+  });
+});
 
 it('should support self-closing tags', function () {
   var node = parse('<a><b>foo</b><b a="bar" /><b>bar</b></a>');
   node.root.should.eql({
-    "name": "a",
-    "attributes": {},
-    "children": [
+    name: "a",
+    attributes: {},
+    children: [
       {
-        "name": "b",
-        "attributes": {},
-        "children": [],
-        "content": "foo"
+        name: "b",
+        attributes: {},
+        children: [{name: '#text', content: 'foo'}]
       },
       {
-        "name": "b",
-        "attributes": {
+        name: "b",
+        attributes: {
           "a": "bar"
         },
-        "children": []
+        children: []
       },
       {
-        "name": "b",
-        "attributes": {},
-        "children": [],
-        "content": "bar"
+        name: "b",
+        attributes: {},
+        children: [{name: '#text', content: 'bar'}]
       }
-    ],
-    "content": ""
-  })
-})
+    ]
+  });
+});
 
 it('should support self-closing tags without attributes', function () {
   var node = parse('<a><b>foo</b><b /> <b>bar</b></a>');
   node.root.should.eql({
-    "name": "a",
-    "attributes": {},
-    "children": [
+    name: "a",
+    attributes: {},
+    children: [
       {
-        "name": "b",
-        "attributes": {},
-        "children": [],
-        "content": "foo"
+        name: "b",
+        attributes: {},
+        children: [{name: '#text', content: 'foo'}]
       },
       {
-        "name": "b",
-        "attributes": {},
-        "children": []
+        name: "b",
+        attributes: {},
+        children: []
       },
+      {name: '#text', content: ' '},
       {
-        "name": "b",
-        "attributes": {},
-        "children": [],
-        "content": "bar"
+        name: "b",
+        attributes: {},
+        children: [{name: '#text', content: 'bar'}]
       }
-    ],
-    "content": ""
-  })
-})
+    ]
+  });
+});
 
 it('should support multi-line comments', function () {
-  var node = parse('<a><!-- multi-line\n comment\n test -->foo</a>')
+  var node = parse('<a><!-- multi-line\n comment\n test -->foo</a>');
   node.root.should.eql({
-    "name": "a",
-    "attributes": {},
-    "children": [],
-    "content": "foo"
-  })
-})
+    name: "a",
+    attributes: {},
+    children: [{name: '#text', content: 'foo'}]
+  });
+});
 
 it('should support attributes with a hyphen', function () {
-  var node = parse('<a data-bar="baz">foo</a>')
+  var node = parse('<a data-bar="baz">foo</a>');
   node.root.should.eql({
     name: "a",
     attributes: {
-      "data-bar": "baz"
+      'data-bar': "baz"
     },
-    children: [],
-    content: "foo"
-  })
-})
+    children: [{name: '#text', content: 'foo'}]
+  });
+});
 
 it('should support tags with a dot', function () {
     var node = parse('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
     node.root.should.eql({
-      name: "root",
+      name: 'root',
       attributes: {},
       children: [{
-        name: "c:Key.Columns",
+        name: 'c:Key.Columns',
         attributes: {},
         children: [{
-          name: "o:Column",
+          name: 'o:Column',
           attributes: {
-            Ref: "ol1"
+            'Ref': 'ol1'
           },
           children: []
-        }],
-        content: ""
+        }]
       }, {
-        name: "c:Key.Columns",
+        name: 'c:Key.Columns',
         attributes: {},
         children: [{
-          name: "o:Column",
+          name: 'o:Column',
           attributes: {
-            "Ref": "ol2"
+            'Ref': 'ol2'
           },
           children: []
-        }],
-        content: ""
-      }],
-      content: ""
-    })
-})
+        }]
+      }]
+    });
+});
 
 it('should support tags with hyphen', function () {
   var node = parse(
@@ -243,20 +273,43 @@ it('should support tags with hyphen', function () {
   node.root.should.eql({
     name: 'root',
     attributes: {},
-    content: '',
     children: [
       {
         name: 'data-field1',
         attributes: {},
-        children: [],
-        content: 'val1'
+        children: [{name: '#text', content: 'val1'}]
       },
       {
         name: 'data-field2',
         attributes: {},
-        children: [],
-        content: 'val2'
+        children: [{name: '#text', content: 'val2'}]
       }
     ]
   });
+});
+
+
+it('should trim the input when option is not specified', function(){
+  var node = parse('   <foo></foo>   ');
+  node.root.should.eql({
+    name: 'foo',
+    attributes: {},
+    children: []
+  });
+});
+
+
+it('should trim the input when option is true', function(){
+  var node = parse('   <foo></foo>   ', {trim: true});
+  node.root.should.eql({
+    name: 'foo',
+    attributes: {},
+    children: []
+  });
+});
+
+
+it('should not trim the input when option is false', function(){
+  var node = parse('   <foo></foo>   ', {trim: false});
+  node.should.eql({ declaration: undefined, root: undefined, children: [] });
 });
