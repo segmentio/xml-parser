@@ -1,7 +1,11 @@
 
-# xml-parser XO
+# xml-parser-xo
 
   XML parser based on [xml-parser](https://www.npmjs.com/package/xml-parser) with eXtra Options (XO).
+  
+  ![Travis CI status](https://travis-ci.org/chrisbottin/xml-parser.svg?branch=xml-parser-xo)
+  
+  [![NPM](https://nodei.co/npm/xml-parser-xo.png?downloads=true)](https://nodei.co/npm/xml-parser-xo/)
 
 ## Installation
 
