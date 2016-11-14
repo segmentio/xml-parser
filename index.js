@@ -114,6 +114,7 @@ function parse(xml, options) {
 
     // self closing tag
     if (match(/^\s*\/>/)) {
+      node.children = null;
       return node;
     }
 

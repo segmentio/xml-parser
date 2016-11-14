@@ -177,7 +177,7 @@ it('should support self-closing tags', function () {
         attributes: {
           "a": "bar"
         },
-        children: []
+        children: null
       },
       {
         name: "b",
@@ -202,7 +202,7 @@ it('should support self-closing tags without attributes', function () {
       {
         name: "b",
         attributes: {},
-        children: []
+        children: null
       },
       {name: '#text', content: ' '},
       {
@@ -247,7 +247,7 @@ it('should support tags with a dot', function () {
           attributes: {
             'Ref': 'ol1'
           },
-          children: []
+          children: null
         }]
       }, {
         name: 'c:Key.Columns',
@@ -257,7 +257,7 @@ it('should support tags with a dot', function () {
           attributes: {
             'Ref': 'ol2'
           },
-          children: []
+          children: null
         }]
       }]
     });

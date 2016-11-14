@@ -1,12 +1,12 @@
 
-# xml-parser
+# xml-parser XO
 
-  Simple non-compiant XML parser because we just need to parse some basic responses and libxml takes forever to compile :D you probably don't want to use this unless you also have similar needs.
+  XML parser based on [xml-parser](https://www.npmjs.com/package/xml-parser) with eXtra Options (XO).
 
 ## Installation
 
 ```
-$ npm install xml-parser
+$ npm install xml-parser-xo
 ```
 
 ## Example
@@ -15,7 +15,7 @@ $ npm install xml-parser
 
 ```js
 var fs = require('fs');
-var parse = require('xml-parser');
+var parse = require('xml-parser-xo');
 var xml = fs.readFileSync('examples/developerforce.xml', 'utf8');
 var inspect = require('util').inspect;
 
@@ -87,7 +87,7 @@ Yields:
  
 ```js
 var inspect = require('util').inspect;
-var parse = require('xml-parser');
+var parse = require('xml-parser-xo');
 var options = {trim: false, stripComments: false};
 
 var obj = parse(xml, options);

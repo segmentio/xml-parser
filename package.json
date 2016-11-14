@@ -1,14 +1,15 @@
 {
-  "name": "xml-parser",
-  "version": "2.0.0",
-  "repository": "segmentio/xml-parser",
-  "description": "the little xml parser that could",
+  "name": "xml-parser-xo",
+  "version": "2.1.1",
+  "repository": "cbottin/xml-parser",
+  "description": "XML Parser with eXtra Options",
   "scripts": {
     "test": "make test"
   },
   "keywords": [
     "xml",
-    "sucks"
+    "parser",
+    "convert"
   ],
   "dependencies": {
     "debug": "^2.2.0"
@@ -17,6 +18,9 @@
     "matcha": "^0.6.0",
     "mocha": "^2.2.5",
     "should": "^6.0.3"
+  },
+  "browser": {
+    "debug": "./browserify/debug-mock.js"
   },
   "license": "MIT"
 }
