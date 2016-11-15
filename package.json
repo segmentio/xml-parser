@@ -1,7 +1,7 @@
 {
   "name": "xml-parser-xo",
-  "version": "2.1.1",
-  "repository": "cbottin/xml-parser",
+  "version": "2.1.2",
+  "repository": "chrisbottin/xml-parser/tree/xml-parser-xo",
   "description": "XML Parser with eXtra Options",
   "scripts": {
     "test": "make test"
