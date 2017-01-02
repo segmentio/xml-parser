@@ -231,7 +231,7 @@ it('should support tags with a dot', function () {
       }],
       content: ""
     })
-})
+});
 
 it('should support tags with hyphen', function () {
   var node = parse(
