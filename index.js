@@ -162,6 +162,10 @@ function parse(xml) {
    */
 
   function is(prefix) {
-    return 0 == xml.indexOf(prefix);
+    switch (prefix.length) {
+      case 1: return xml[0] == prefix;
+      case 2: return xml[0] == prefix[0] && xml[1] == prefix[1];
+      default: return 0 == xml.indexOf(prefix);
+    }
   }
 }
