@@ -4,7 +4,8 @@
   "repository": "chrisbottin/xml-parser",
   "description": "XML Parser with eXtra Options",
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha",
+    "prepublishOnly": "npm test"
   },
   "engines": {
     "node": ">= 10"
