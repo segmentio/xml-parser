@@ -12,12 +12,11 @@
     "convert"
   ],
   "dependencies": {
-    "debug": "^2.2.0"
+    "debug": "^4.1.1"
   },
   "devDependencies": {
-    "matcha": "^0.6.0",
-    "mocha": "^2.2.5",
-    "should": "^6.0.3"
+    "chai": "^4.2.0",
+    "mocha": "^6.2.1"
   },
   "browser": {
     "debug": "./browserify/debug-mock.js"

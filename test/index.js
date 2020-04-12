@@ -1,15 +1,19 @@
 
 var parse = require('..');
-var should = require('should');
+var assert = require('chai').assert;
 
 it('should support blank strings', function(){
   var node = parse('');
-  node.should.eql({ declaration: undefined, root: undefined, children: [] });
+  assert.deepEqual(node, {
+    declaration: undefined,
+    root: undefined,
+    children: []
+  });
 });
 
 it('should support declarations', function(){
   var node = parse('<?xml version="1.0" ?>');
-  node.should.eql({
+  assert.deepEqual(node, {
     declaration: {
       attributes: {
         version: '1.0'
@@ -29,11 +33,11 @@ it('should strip comments when option is not specified', function(){
     children: []
   };
 
-  node.should.eql(
-      { declaration: undefined,
-        root: root,
-        children: [root]
-      });
+  assert.deepEqual(node, {
+    declaration: undefined,
+    root: root,
+    children: [root]
+  });
 });
 
 it('should strip comments when option is true', function(){
@@ -45,11 +49,11 @@ it('should strip comments when option is true', function(){
     children: []
   };
 
-  node.should.eql(
-      { declaration: undefined,
-        root: root,
-        children: [root]
-      });
+  assert.deepEqual(node, {
+    declaration: undefined,
+    root: root,
+    children: [root]
+  });
 });
 
 it('should not strip comments when option is false', function(){
@@ -61,20 +65,21 @@ it('should not strip comments when option is false', function(){
     children: []
   };
 
-  node.should.eql(
-      { declaration: undefined,
-        root: root,
-        children: [
-          {name: '#comment', content: '<!-- hello -->'},
-          root,
-          {name: '#comment', content: '<!-- world -->'}
-        ]
-      });
+  assert.deepEqual(node, {
+    declaration: undefined,
+    root: root,
+    children: [
+      {name: '#comment', content: '<!-- hello -->'},
+      root,
+      {name: '#comment', content: '<!-- world -->'}
+    ]
+  });
 });
 
 it('should support tags without text', function(){
   var node = parse('<foo></foo>');
-  node.root.should.eql({
+
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: {},
     children: []
@@ -83,7 +88,7 @@ it('should support tags without text', function(){
 
 it('should support tags with text', function(){
   var node = parse('<foo>hello world</foo>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: {},
     children: [
@@ -94,7 +99,7 @@ it('should support tags with text', function(){
 
 it('should support weird whitespace', function(){
   var node = parse('<foo \n\n\nbar\n\n=   \nbaz>\n\nhello world</\n\nfoo>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: { bar: 'baz' },
     children: [
@@ -105,7 +110,7 @@ it('should support weird whitespace', function(){
 
 it('should support tags with attributes', function(){
   var node = parse('<foo bar=baz some="stuff here" whatever=\'whoop\'></foo>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: {
       bar: 'baz',
@@ -118,7 +123,7 @@ it('should support tags with attributes', function(){
 
 it('should support nested tags', function(){
   var node = parse('<a><b><c>hello</c></b></a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'a',
     attributes: {},
     children: [
@@ -139,7 +144,7 @@ it('should support nested tags', function(){
 
 it('should support nested tags with text', function(){
   var node = parse('<a>foo <b>bar <c>baz</c> bad</b></a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'a',
     attributes: {},
     children: [
@@ -163,7 +168,7 @@ it('should support nested tags with text', function(){
 
 it('should support self-closing tags', function () {
   var node = parse('<a><b>foo</b><b a="bar" /><b>bar</b></a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: "a",
     attributes: {},
     children: [
@@ -190,7 +195,7 @@ it('should support self-closing tags', function () {
 
 it('should support self-closing tags without attributes', function () {
   var node = parse('<a><b>foo</b><b /> <b>bar</b></a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: "a",
     attributes: {},
     children: [
@@ -216,7 +221,7 @@ it('should support self-closing tags without attributes', function () {
 
 it('should support multi-line comments', function () {
   var node = parse('<a><!-- multi-line\n comment\n test -->foo</a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: "a",
     attributes: {},
     children: [{name: '#text', content: 'foo'}]
@@ -225,7 +230,7 @@ it('should support multi-line comments', function () {
 
 it('should support attributes with a hyphen', function () {
   var node = parse('<a data-bar="baz">foo</a>');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: "a",
     attributes: {
       'data-bar': "baz"
@@ -235,32 +240,32 @@ it('should support attributes with a hyphen', function () {
 });
 
 it('should support tags with a dot', function () {
-    var node = parse('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
-    node.root.should.eql({
-      name: 'root',
+  var node = parse('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
+  assert.deepEqual(node.root, {
+    name: 'root',
+    attributes: {},
+    children: [{
+      name: 'c:Key.Columns',
       attributes: {},
       children: [{
-        name: 'c:Key.Columns',
-        attributes: {},
-        children: [{
-          name: 'o:Column',
-          attributes: {
-            'Ref': 'ol1'
-          },
-          children: null
-        }]
-      }, {
-        name: 'c:Key.Columns',
-        attributes: {},
-        children: [{
-          name: 'o:Column',
-          attributes: {
-            'Ref': 'ol2'
-          },
-          children: null
-        }]
+        name: 'o:Column',
+        attributes: {
+          'Ref': 'ol1'
+        },
+        children: null
       }]
-    });
+    }, {
+      name: 'c:Key.Columns',
+      attributes: {},
+      children: [{
+        name: 'o:Column',
+        attributes: {
+          'Ref': 'ol2'
+        },
+        children: null
+      }]
+    }]
+  });
 });
 
 it('should support tags with hyphen', function () {
@@ -270,7 +275,7 @@ it('should support tags with hyphen', function () {
       '<data-field2>val2</data-field2>' +
     '</root>'
   );
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'root',
     attributes: {},
     children: [
@@ -291,7 +296,7 @@ it('should support tags with hyphen', function () {
 
 it('should trim the input when option is not specified', function(){
   var node = parse('   <foo></foo>   ');
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: {},
     children: []
@@ -301,7 +306,7 @@ it('should trim the input when option is not specified', function(){
 
 it('should trim the input when option is true', function(){
   var node = parse('   <foo></foo>   ', {trim: true});
-  node.root.should.eql({
+  assert.deepEqual(node.root, {
     name: 'foo',
     attributes: {},
     children: []
@@ -311,5 +316,5 @@ it('should trim the input when option is true', function(){
 
 it('should not trim the input when option is false', function(){
   var node = parse('   <foo></foo>   ', {trim: false});
-  node.should.eql({ declaration: undefined, root: undefined, children: [] });
+  assert.deepEqual(node, {declaration: undefined, root: undefined, children: []});
 });
