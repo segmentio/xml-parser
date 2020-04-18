@@ -1,39 +1,35 @@
 {
   "name": "xml-parser-xo",
-  "version": "2.2.1",
-  "repository": "chrisbottin/xml-parser",
-  "description": "XML Parser with eXtra Options",
+  "version": "3.0.0",
+  "repository": "github:chrisbottin/xml-parser",
+  "bugs": {
+    "url": "https://github.com/chrisbottin/xml-parser/issues"
+  },
+  "homepage": "https://github.com/chrisbottin/xml-parser#readme",
+  "description": "Parse a XML string into a proprietary syntax tree",
+  "author": "Chris Bottin <chrisbottin@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "prepublishOnly": "npm test"
+    "test": "mocha",
+    "prepublishOnly": "eslint . && npm test"
   },
   "engines": {
     "node": ">= 10"
   },
   "keywords": [
     "xml",
+    "parse",
     "parser",
-    "convert"
+    "convert",
+    "converter",
+    "syntax",
+    "tree"
   ],
-  "dependencies": {
-    "debug": "^4.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^6.8.0",
     "mocha": "^6.2.1"
-  },
-  "browser": {
-    "debug": "./browserify/debug-mock.js"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/chrisbottin/xml-parser/issues"
-  },
-  "homepage": "https://github.com/chrisbottin/xml-parser#readme",
-  "main": "index.js",
-  "directories": {
-    "example": "examples",
-    "test": "test"
-  },
-  "author": ""
+  }
 }

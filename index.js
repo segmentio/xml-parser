@@ -1,213 +1,239 @@
-
 /**
- * Module dependencies.
+ * @typedef {Object} ParsingOptions
+ *  @property {function(node)} filter Returns false to exclude a node. Default is true.
  */
 
-var debug = require('debug')('xml-parser');
-
 /**
- * Expose `parse`.
- */
-
-module.exports = parse;
-
-/**
- * Parse the given string of `xml`.
+ * Parse the given XML string into an object.
  *
  * @param {String} xml
- * @param {Object} [options]
- *  @config {Boolean} [trim=true]
- *  @config {Boolean} [stripComments=true]
+ * @param {ParsingOptions} [options]
  * @return {Object}
  * @api public
  */
+function parse(xml, options = {}) {
 
-function parse(xml, options) {
+    options.filter = options.filter || (() => true);
 
-  // trim content
-  if (!options || options.trim) {
-    xml = xml.trim();
-  }
+    function nextChild() {
+        return tag() || content() || comment() || cdata();
+    }
 
-  // strip comments
-  if (!options || options.stripComments) {
-    xml = xml.replace(/<!--[\s\S]*?-->/g, '');
-  }
+    function nextRootChild() {
+        match(/\s*/);
+        return tag(true) || comment() || doctype() || processingInstruction(false);
+    }
 
-  return document();
+    function document() {
+        const decl = declaration();
+        const children = [];
+        let documentRootNode;
+        let child = nextRootChild();
 
-  /**
-   * XML document.
-   */
+        while (child) {
+            if (child.node.type === 'Element') {
+                if (documentRootNode) {
+                    throw new Error('Found multiple root nodes');
+                }
+                documentRootNode = child.node;
+            }
 
-  function document() {
+            if (!child.excluded) {
+                children.push(child.node);
+            }
 
-    var decl = declaration();
-    var child;
-    var children = [];
-    var documentRootNode;
-
-    while (child = nextRootChild()) {
-      if (child.name !== '#comment') {
-        if (documentRootNode) {
-          throw new Error('Found multiple root nodes');
+            child = nextRootChild();
         }
-        documentRootNode = child;
-      }
-      children.push(child);
+
+        if (!documentRootNode) {
+            throw new Error('Failed to parse XML');
+        }
+
+        return {
+            declaration: decl ? decl.node : null,
+            root: documentRootNode,
+            children
+        };
     }
 
-    return {
-      declaration: decl,
-      root: documentRootNode,
-      children: children
-    };
-  }
-
-  /**
-   * Declaration.
-   */
-
-  function declaration() {
-    var m = match(/^<\?xml\s*/);
-    if (!m) return;
-
-    // tag
-    var node = {
-      attributes: {}
-    };
-
-    // attributes
-    while (!(eos() || is('?>'))) {
-      var attr = attribute();
-      if (!attr) return node;
-      node.attributes[attr.name] = attr.value;
+    function declaration() {
+        return processingInstruction(true);
     }
 
-    match(/\?>\s*/);
+    function processingInstruction(matchDeclaration) {
+        const m = matchDeclaration ? match(/^<\?(xml)\s*/) : match(/^<\?([\w-:.]+)\s*/);
+        if (!m) return;
 
-    return node;
-  }
+        // tag
+        const node = {
+            name: m[1],
+            type: 'ProcessingInstruction',
+            attributes: {}
+        };
 
-  /**
-   * Tag.
-   */
+        // attributes
+        while (!(eos() || is('?>'))) {
+            const attr = attribute();
+            if (!attr) return node;
+            node.attributes[attr.name] = attr.value;
+        }
 
-  function tag() {
-    debug('tag %j', xml);
-    var m = match(/^<([\w-:.]+)\s*/);
-    if (!m) return;
+        match(/\?>/);
 
-    // name
-    var node = {
-      name: m[1],
-      attributes: {},
-      children: []
-    };
-
-    // attributes
-    while (!(eos() || is('>') || is('?>') || is('/>'))) {
-      var attr = attribute();
-      if (!attr) return node;
-      node.attributes[attr.name] = attr.value;
+        return {
+            excluded: matchDeclaration ? false : options.filter(node) === false,
+            node
+        };
     }
 
-    // self closing tag
-    if (match(/^\s*\/>/)) {
-      node.children = null;
-      return node;
+    function tag(matchRoot) {
+        const m = match(/^<([\w-:.]+)\s*/);
+        if (!m) return;
+
+        // name
+        const node = {
+            type: 'Element',
+            name: m[1],
+            attributes: {},
+            children: []
+        };
+
+        // attributes
+        while (!(eos() || is('>') || is('?>') || is('/>'))) {
+            const attr = attribute();
+            if (!attr) return node;
+            node.attributes[attr.name] = attr.value;
+        }
+
+        const excluded = matchRoot ? false : options.filter(node) === false;
+
+        // self closing tag
+        if (match(/^\s*\/>/)) {
+            node.children = null;
+            return {
+                excluded,
+                node
+            };
+        }
+
+        match(/\??>/);
+
+        if (!excluded) {
+            // children
+            let child = nextChild();
+            while (child) {
+                if (!child.excluded) {
+                    node.children.push(child.node);
+                }
+                child = nextChild();
+            }
+        }
+
+        // closing
+        match(/^<\/[\w-:.]+>/);
+
+        return {
+            excluded,
+            node
+        };
     }
 
-    match(/\??>/);
-
-    // children
-    var child;
-    while (child = nextChild()) {
-      node.children.push(child);
+    function doctype() {
+        const m = match(/^<!DOCTYPE\s+[^>]*>/);
+        if (m) {
+            const node = {
+                type: 'DocumentType',
+                content: m[0]
+            };
+            return {
+                excluded: options.filter(node) === false,
+                node
+            };
+        }
     }
 
-    // closing
-    match(/^<\/[\w-:.]+>/);
-
-    return node;
-  }
-
-  function nextChild() {
-    return tag() || content() || comment();
-  }
-
-  function nextRootChild() {
-    return tag() || comment();
-  }
-
-  function comment() {
-    var m = match(/^<!--[\s\S]*?-->/);
-    if (m) {
-      return {
-        name: '#comment',
-        content: m[0]
-      };
+    function cdata() {
+        const m = match(/^<!\[CDATA\[[^\]\]>]*]]>/);
+        if (m) {
+            const node = {
+                type: 'CDATA',
+                content: m[0]
+            };
+            return {
+                excluded: options.filter(node) === false,
+                node
+            };
+        }
     }
-  }
 
-  /**
-   * Text content.
-   */
-
-  function content() {
-    debug('content %j', xml);
-    var m = match(/^([^<]+)/);
-    if (m) {
-      return {
-        name: '#text',
-        content: m[1]
-      };
+    function comment() {
+        const m = match(/^<!--[\s\S]*?-->/);
+        if (m) {
+            const node = {
+                type: 'Comment',
+                content: m[0]
+            };
+            return {
+                excluded: options.filter(node) === false,
+                node
+            };
+        }
     }
-  }
 
-  /**
-   * Attribute.
-   */
+    function content() {
+        const m = match(/^([^<]+)/);
+        if (m) {
+            const node = {
+                type: 'Text',
+                content: m[1]
+            };
+            return {
+                excluded: options.filter(node) === false,
+                node
+            };
+        }
+    }
 
-  function attribute() {
-    debug('attribute %j', xml);
-    var m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
-    if (!m) return;
-    return { name: m[1], value: strip(m[2]) }
-  }
+    function attribute() {
+        const m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
+        if (!m) return;
+        return {name: m[1], value: strip(m[2])}
+    }
 
-  /**
-   * Strip quotes from `val`.
-   */
+    /**
+     * Strip quotes from `val`.
+     */
+    function strip(val) {
+        return val.replace(/^['"]|['"]$/g, '');
+    }
 
-  function strip(val) {
-    return val.replace(/^['"]|['"]$/g, '');
-  }
+    /**
+     * Match `re` and advance the string.
+     */
+    function match(re) {
+        const m = xml.match(re);
+        if (!m) return;
+        xml = xml.slice(m[0].length);
+        return m;
+    }
 
-  /**
-   * Match `re` and advance the string.
-   */
+    /**
+     * End-of-source.
+     */
+    function eos() {
+        return 0 === xml.length;
+    }
 
-  function match(re) {
-    var m = xml.match(re);
-    if (!m) return;
-    xml = xml.slice(m[0].length);
-    return m;
-  }
+    /**
+     * Check for `prefix`.
+     */
+    function is(prefix) {
+        return 0 === xml.indexOf(prefix);
+    }
 
-  /**
-   * End-of-source.
-   */
+    xml = xml.trim();
 
-  function eos() {
-    return 0 == xml.length;
-  }
-
-  /**
-   * Check for `prefix`.
-   */
-
-  function is(prefix) {
-    return 0 == xml.indexOf(prefix);
-  }
+    return document();
 }
+
+module.exports = parse;
