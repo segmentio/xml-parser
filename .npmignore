@@ -1,5 +1,10 @@
 node_modules
-benchmark
-examples
 test
-Makefile
+.DS_Store
+.idea
+*.iml
+.eslintrc.json
+.gitignore
+.npmignore
+.npmrc
+.travis.yml
