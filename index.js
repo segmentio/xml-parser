@@ -153,16 +153,20 @@ function parse(xml, options = {}) {
     }
 
     function cdata() {
-        const m = match(/^<!\[CDATA\[[^\]\]>]*]]>/);
-        if (m) {
-            const node = {
-                type: 'CDATA',
-                content: m[0]
-            };
-            return {
-                excluded: options.filter(node) === false,
-                node
-            };
+        if (xml.startsWith('<![CDATA[')) {
+            const endPositionStart = xml.indexOf(']]>');
+            if (endPositionStart > -1) {
+                const endPositionFinish  = endPositionStart + 3;
+                const node = {
+                    type: 'CDATA',
+                    content: xml.substring(0, endPositionFinish)
+                };
+                xml = xml.slice(endPositionFinish);
+                return {
+                    excluded: options.filter(node) === false,
+                    node
+                };
+            }
         }
     }
 
