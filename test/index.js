@@ -96,13 +96,14 @@ describe('XML Parser', function() {
     });
 
     it('should support tags with attributes', function() {
-        const node = parse('<foo bar=baz some="stuff here" whatever=\'whoop\'></foo>');
+        const node = parse('<foo bar=baz some="stuff here" a.1="2" whatever=\'whoop\'></foo>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'foo',
             attributes: {
                 bar: 'baz',
                 some: 'stuff here',
+                'a.1': '2',
                 whatever: 'whoop'
             },
             children: []

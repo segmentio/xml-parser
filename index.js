@@ -199,7 +199,7 @@ function parse(xml, options = {}) {
     }
 
     function attribute() {
-        const m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
+        const m = match(/([\w-:.]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
         if (!m) return;
         return {name: m[1], value: strip(m[2])}
     }
