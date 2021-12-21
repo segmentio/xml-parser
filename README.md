@@ -1,11 +1,9 @@
 
 # xml-parser-xo
 
-  XML parser based on [xml-parser](https://www.npmjs.com/package/xml-parser).
-  
-  [![Travis CI status](https://travis-ci.org/chrisbottin/xml-parser.svg?branch=xml-parser-xo)](https://travis-ci.org/chrisbottin/xml-parser)
-  
-  [![NPM](https://nodei.co/npm/xml-parser-xo.png?downloads=true)](https://nodei.co/npm/xml-parser-xo/)
+XML parser based on [xml-parser](https://www.npmjs.com/package/xml-parser).
+
+[![Build Status](https://github.com/chrisbottin/xml-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisbottin/xml-parser/actions/workflows/ci.yml) [![npm version](https://img.shields.io/npm/v/xml-parser-xo.svg)](https://npmjs.org/package/xml-parser-xo)
 
 ## Installation
 
