@@ -1,21 +1,39 @@
-const assert = require('chai').assert;
-const parse = require('../index');
+import {assert} from 'chai';
+import xmlParser, {XmlParserElementNode} from '../src/index';
 
 describe('XML Parser', function() {
 
     it('should fail to parse blank strings', function() {
         try {
-            parse('');
+            xmlParser('');
             assert.fail('Should fail');
-        } catch(err) {
+        } catch(err: any) {
+            assert.equal(err.message, 'Failed to parse XML');
+        }
+    });
+
+    it('should fail to parse when element attribute is badly formed', function() {
+        try {
+            xmlParser('<?xml version="1.0" ?><foo me></foo>');
+            assert.fail('Should fail');
+        } catch(err: any) {
+            assert.equal(err.message, 'Failed to parse XML');
+        }
+    });
+
+    it('should fail to parse when processing instruction attribute is badly formed', function() {
+        try {
+            xmlParser('<?xml version ?><foo></foo>');
+            assert.fail('Should fail');
+        } catch(err: any) {
             assert.equal(err.message, 'Failed to parse XML');
         }
     });
 
     it('should support declarations', function() {
-        const node = parse('<?xml version="1.0" ?><foo></foo>');
+        const node = xmlParser('<?xml version="1.0" ?><foo></foo>');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -36,16 +54,15 @@ describe('XML Parser', function() {
     });
 
     it('should support comments', function() {
-        const node = parse('<!-- hello --><foo><!-- content --> hey</foo><!-- world -->', {stripComments: false});
+        const node = xmlParser('<!-- hello --><foo><!-- content --> hey</foo><!-- world -->');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
             children: [
                 {type: 'Comment', content: '<!-- content -->'},
-                {type: 'Text', content: ' hey'},
-
+                {type: 'Text', content: ' hey'}
             ]
         };
 
@@ -61,7 +78,7 @@ describe('XML Parser', function() {
     });
 
     it('should support tags without text', function() {
-        const node = parse('<foo></foo>');
+        const node = xmlParser('<foo></foo>');
 
         assert.deepEqual(node.root, {
             type: 'Element',
@@ -72,7 +89,7 @@ describe('XML Parser', function() {
     });
 
     it('should support tags with text', function() {
-        const node = parse('<foo>hello world</foo>');
+        const node = xmlParser('<foo>hello world</foo>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'foo',
@@ -84,7 +101,7 @@ describe('XML Parser', function() {
     });
 
     it('should support weird whitespace', function() {
-        const node = parse('<foo \n\n\nbar\n\n=   \nbaz>\n\nhello world</\n\nfoo>');
+        const node = xmlParser('<foo \n\n\nbar\n\n=   \nbaz>\n\nhello world</\n\nfoo>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'foo',
@@ -96,7 +113,7 @@ describe('XML Parser', function() {
     });
 
     it('should support tags with attributes', function() {
-        const node = parse('<foo bar=baz some="stuff here" a.1="2" whatever=\'whoop\'></foo>');
+        const node = xmlParser('<foo bar=baz some="stuff here" a.1="2" whatever=\'whoop\'></foo>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'foo',
@@ -111,7 +128,7 @@ describe('XML Parser', function() {
     });
 
     it('should support nested tags', function() {
-        const node = parse('<a><b><c>hello</c></b></a>');
+        const node = xmlParser('<a><b><c>hello</c></b></a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -135,7 +152,7 @@ describe('XML Parser', function() {
     });
 
     it('should support nested tags with text', function() {
-        const node = parse('<a>foo <b>bar <c>baz</c> bad</b></a>');
+        const node = xmlParser('<a>foo <b>bar <c>baz</c> bad</b></a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -162,7 +179,7 @@ describe('XML Parser', function() {
     });
 
     it('should support self-closing tags', function() {
-        const node = parse('<a><b>foo</b><b a="bar" /><b>bar</b></a>');
+        const node = xmlParser('<a><b>foo</b><b a="bar" /><b>bar</b></a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -193,7 +210,7 @@ describe('XML Parser', function() {
     });
 
     it('should support self-closing tags without attributes', function() {
-        const node = parse('<a><b>foo</b><b /> <b>bar</b></a>');
+        const node = xmlParser('<a><b>foo</b><b /> <b>bar</b></a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -223,7 +240,7 @@ describe('XML Parser', function() {
     });
 
     it('should support multi-line comments', function() {
-        const node = parse('<a><!-- multi-line\n comment\n test -->foo</a>');
+        const node = xmlParser('<a><!-- multi-line\n comment\n test -->foo</a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -239,7 +256,7 @@ describe('XML Parser', function() {
     });
 
     it('should support attributes with a hyphen', function() {
-        const node = parse('<a data-bar="baz">foo</a>');
+        const node = xmlParser('<a data-bar="baz">foo</a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
@@ -251,7 +268,7 @@ describe('XML Parser', function() {
     });
 
     it('should support tags with a dot', function() {
-        const node = parse('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
+        const node = xmlParser('<root><c:Key.Columns><o:Column Ref="ol1"/></c:Key.Columns><c:Key.Columns><o:Column Ref="ol2"/></c:Key.Columns></root>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'root',
@@ -285,7 +302,7 @@ describe('XML Parser', function() {
     });
 
     it('should support tags with hyphen', function() {
-        const node = parse(
+        const node = xmlParser(
             '<root>' +
             '<data-field1>val1</data-field1>' +
             '<data-field2>val2</data-field2>' +
@@ -312,9 +329,29 @@ describe('XML Parser', function() {
         });
     });
 
+    it('should support unicode characters', function() {
+        const node = xmlParser('<root><tåg åttr1="vålue1" åttr2=vålue2></tåg></root>');
+
+        assert.deepEqual(node.root, {
+            type: 'Element',
+            name: 'root',
+            attributes: {},
+            children: [
+                {
+                    type: 'Element',
+                    name: 'tåg',
+                    attributes: {
+                        'åttr1': 'vålue1',
+                        'åttr2': 'vålue2'
+                    },
+                    children: []
+                }
+            ]
+        });
+    });
 
     it('should trim the input', function() {
-        const node = parse('   <foo></foo>   ');
+        const node = xmlParser('   <foo></foo>   ');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'foo',
@@ -325,9 +362,9 @@ describe('XML Parser', function() {
 
 
     it('should support CDATA elements', function() {
-        const node = parse('<?xml version="1.0" ?><foo><![CDATA[some text]]> hello <![CDATA[some more text]]></foo>');
+        const node = xmlParser('<?xml version="1.0" ?><foo><![CDATA[some text]]> hello <![CDATA[some more text]]></foo>');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -352,9 +389,9 @@ describe('XML Parser', function() {
     });
 
     it('should support CDATA elements with XML content', function() {
-        const node = parse('<?xml version="1.0" ?><foo><![CDATA[<baz/>]]> hello</foo>');
+        const node = xmlParser('<?xml version="1.0" ?><foo><![CDATA[<baz/>]]> hello</foo>');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -378,9 +415,9 @@ describe('XML Parser', function() {
     });
 
     it('should support DOCTYPE', function() {
-        const node = parse('<?xml version="1.0" ?>\n<!DOCTYPE foo SYSTEM "foo.dtd">\n<foo></foo>');
+        const node = xmlParser('<?xml version="1.0" ?>\n<!DOCTYPE foo SYSTEM "foo.dtd">\n<foo></foo>');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -404,9 +441,9 @@ describe('XML Parser', function() {
     });
 
     it('should support processing instructions', function() {
-        const node = parse('<?xml version="1.0" ?><?xml-stylesheet href="style.xsl" type="text/xsl" ?><foo></foo>');
+        const node = xmlParser('<?xml version="1.0" ?><?xml-stylesheet href="style.xsl" type="text/xsl" ?><foo></foo>');
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -437,7 +474,7 @@ describe('XML Parser', function() {
     });
 
     it('should support complex XML', function() {
-        const node = parse(`<?xml version="1.0" encoding="utf-8"?>
+        const node = xmlParser(`<?xml version="1.0" encoding="utf-8"?>
 <!-- Load the stylesheet -->
 <?xml-stylesheet href="foo.xsl" type="text/xsl" ?>
 <!DOCTYPE foo SYSTEM "foo.dtd">
@@ -445,7 +482,7 @@ describe('XML Parser', function() {
 <![CDATA[some text]]> and <bar>some more</bar>
 </foo>`);
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -493,7 +530,7 @@ describe('XML Parser', function() {
 
     it('should parse by filtering all nodes', function() {
 
-        const node = parse(`<?xml version="1.0" encoding="utf-8"?>
+        const node = xmlParser(`<?xml version="1.0" encoding="utf-8"?>
 <!-- Load the stylesheet -->
 <?xml-stylesheet href="foo.xsl" type="text/xsl" ?>
 <!DOCTYPE foo SYSTEM "foo.dtd">
@@ -503,7 +540,7 @@ describe('XML Parser', function() {
             filter: () => false
         });
 
-        const root = {
+        const root: XmlParserElementNode = {
             type: 'Element',
             name: 'foo',
             attributes: {},
@@ -528,7 +565,7 @@ describe('XML Parser', function() {
 
     it('should parse by filtering some nodes', function() {
 
-        const node = parse(`<?xml version="1.0" encoding="utf-8"?>
+        const node = xmlParser(`<?xml version="1.0" encoding="utf-8"?>
 <!-- Load the stylesheet -->
 <?xml-stylesheet href="foo.xsl" type="text/xsl" ?>
 <!DOCTYPE foo SYSTEM "foo.dtd">
@@ -540,7 +577,7 @@ describe('XML Parser', function() {
             }
         });
 
-    const root = {
+    const root: XmlParserElementNode = {
         type: 'Element',
         name: 'foo',
         attributes: {},
