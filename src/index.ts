@@ -64,6 +64,16 @@ export type XmlParserResult = {
     children: XmlParserDocumentChildNode[];
 };
 
+export class ParsingError extends Error {
+
+    public readonly cause: string;
+
+    public constructor(message: string, cause: string) {
+        super(message);
+        this.cause = cause;
+    }
+}
+
 let parsingState: {
     xml: string;
     options: Required<XmlParserOptions>;
@@ -100,7 +110,11 @@ function parseDocument(): XmlParserResult {
     }
 
     if (!documentRootNode) {
-        throw new Error('Failed to parse XML');
+        throw new ParsingError('Failed to parse XML', 'Root Element not found');
+    }
+
+    if (parsingState.xml.length !== 0) {
+        throw new ParsingError('Failed to parse XML', 'Not Well-Formed XML');
     }
 
     return {
@@ -174,19 +188,17 @@ function element(matchRoot: boolean): XmlParserNodeWrapper<XmlParserElementNode>
 
     match(/\??>/);
 
-    if (!excluded) {
-        // children
-        let child = nextChild();
-        while (child) {
-            if (!child.excluded) {
-                node.children!.push(child.node);
-            }
-            child = nextChild();
+    // children
+    let child = nextChild();
+    while (child) {
+        if (!child.excluded) {
+            node.children!.push(child.node);
         }
+        child = nextChild();
     }
 
     // closing
-    match(/^<\/[\w-:.]+>/);
+    match(/^<\/\s*[\w-:.\u00C0-\u00FF]+>/);
 
     return {
         excluded,
@@ -312,5 +324,7 @@ function parseXml(xml: string, options: XmlParserOptions = {}): XmlParserResult 
 
     return parseDocument();
 }
+
+module.exports = parseXml;
 
 export default parseXml;

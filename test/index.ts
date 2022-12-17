@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import xmlParser, {XmlParserElementNode} from '../src/index';
+import xmlParser, {ParsingError, XmlParserElementNode} from '../src/index';
 
 describe('XML Parser', function() {
 
@@ -9,6 +9,7 @@ describe('XML Parser', function() {
             assert.fail('Should fail');
         } catch(err: any) {
             assert.equal(err.message, 'Failed to parse XML');
+            assert.equal((err as ParsingError).cause, 'Root Element not found');
         }
     });
 
@@ -18,6 +19,16 @@ describe('XML Parser', function() {
             assert.fail('Should fail');
         } catch(err: any) {
             assert.equal(err.message, 'Failed to parse XML');
+        }
+    });
+
+    it('should fail to parse when element is not closed correctly', function() {
+        try {
+            xmlParser('<?xml version="1.0" ?><foo>bar<</foo>');
+            assert.fail('Should fail');
+        } catch(err: any) {
+            assert.equal(err.message, 'Failed to parse XML');
+            assert.equal((err as ParsingError).cause, 'Not Well-Formed XML');
         }
     });
 
