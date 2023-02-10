@@ -266,13 +266,14 @@ describe('XML Parser', function() {
         });
     });
 
-    it('should support attributes with a hyphen', function() {
-        const node = xmlParser('<a data-bar="baz">foo</a>');
+    it('should support attributes with a hyphen and namespaces', function() {
+        const node = xmlParser('<a data-bar="baz" ns:bar="baz">foo</a>');
         assert.deepEqual(node.root, {
             type: 'Element',
             name: 'a',
             attributes: {
-                'data-bar': 'baz'
+                'data-bar': 'baz',
+                'ns:bar': 'baz'
             },
             children: [{type: 'Text', content: 'foo'}]
         });
@@ -312,11 +313,11 @@ describe('XML Parser', function() {
         });
     });
 
-    it('should support tags with hyphen', function() {
+    it('should support tags with hyphen and namespaces', function() {
         const node = xmlParser(
             '<root>' +
             '<data-field1>val1</data-field1>' +
-            '<data-field2>val2</data-field2>' +
+            '<ns:field2>val2</ns:field2>' +
             '</root>'
         );
         assert.deepEqual(node.root, {
@@ -332,7 +333,7 @@ describe('XML Parser', function() {
                 },
                 {
                     type: 'Element',
-                    name: 'data-field2',
+                    name: 'ns:field2',
                     attributes: {},
                     children: [{type: 'Text', content: 'val2'}]
                 }
@@ -341,7 +342,13 @@ describe('XML Parser', function() {
     });
 
     it('should support unicode characters', function() {
-        const node = xmlParser('<root><tåg åttr1="vålue1" åttr2=vålue2></tåg></root>');
+        const node = xmlParser(
+            '<root>' +
+            '<tåg åttr1="vålue1" åttr2=vålue2>' +
+                '<tåg>' +
+                    '<tag ąśćłó="vålue1"/>' +
+                '</tåg>' +
+            '</tåg></root>');
 
         assert.deepEqual(node.root, {
             type: 'Element',
@@ -355,7 +362,23 @@ describe('XML Parser', function() {
                         'åttr1': 'vålue1',
                         'åttr2': 'vålue2'
                     },
-                    children: []
+                    children: [
+                        {
+                            type: 'Element',
+                            name: 'tåg',
+                            attributes: {},
+                            children: [
+                                {
+                                    type: 'Element',
+                                    name: 'tag',
+                                    attributes: {
+                                        'ąśćłó': 'vålue1'
+                                    },
+                                    children: null
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         });

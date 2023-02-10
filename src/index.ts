@@ -154,7 +154,7 @@ function processingInstruction(matchDeclaration: boolean): XmlParserNodeWrapper<
 }
 
 function element(matchRoot: boolean): XmlParserNodeWrapper<XmlParserElementNode>|undefined {
-    const m = match(/^<([\w-:.\u00C0-\u00FF]+)\s*/);
+    const m = match(/^<([^?!</>\s]+)\s*/);
     if (!m) return;
 
     // name
@@ -267,11 +267,11 @@ function text(): XmlParserNodeWrapper<XmlParserTextNode>|undefined {
 }
 
 function attribute(): XmlParserAttribute|undefined {
-    const m = match(/([\w-:.\u00C0-\u00FF]+)\s*=\s*("[^"]*"|'[^']*'|[\w\u00C0-\u00FF]+)\s*/);
+    const m = match(/([^=]+)\s*=\s*("[^"]*"|'[^']*'|[^>\s]+)\s*/);
     if (m) {
         return {
-            name: m[1],
-            value: stripQuotes(m[2])
+            name: m[1].trim(),
+            value: stripQuotes(m[2].trim())
         };
     }
 }
